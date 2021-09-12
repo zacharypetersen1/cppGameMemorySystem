@@ -24,7 +24,7 @@ void DynamicAllocator::print()
 	}
 }
 
-void* DynamicAllocator::alloc(size_t size, Alignment align)
+void* DynamicAllocator::alloc(size_t size, U8 align)
 {
 	return malloc(size);
 }

@@ -15,5 +15,6 @@ public:
 	void startup();
 	void shutdown();
 	void print();
-	void* alloc(size_t size, Alignment align, Allocator allocType);
+	void* alloc(size_t size, U8 align, Allocator allocType);
+	void clearFrameMemory() { oneFrameAlloc.clear(); }
 };
