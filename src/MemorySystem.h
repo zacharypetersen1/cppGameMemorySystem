@@ -2,7 +2,7 @@
 #include "DynamicAllocator.h"
 #include "StackAllocator.h"
 #include "Types.h"
-#include "Enums.h"
+#include "MemoryUtils.h"
 
 class MemorySystem
 {

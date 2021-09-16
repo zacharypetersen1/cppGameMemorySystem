@@ -141,13 +141,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DynamicAllocator.cpp" />
-    <ClCompile Include="Enums.cpp" />
+    <ClCompile Include="MemoryUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemorySystem.cpp" />
     <ClCompile Include="StackAllocator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enums.h" />
+    <ClInclude Include="MemoryUtils.h" />
     <ClInclude Include="DynamicAllocator.h" />
     <ClInclude Include="MemorySystem.h" />
     <ClInclude Include="StackAllocator.h" />
