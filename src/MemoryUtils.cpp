@@ -1,9 +1,14 @@
 #include "MemoryUtils.h"
 
-uintptr_t Align(uintptr_t addr, U8 align)
+Alignment::Alignment(int a) : value(a)
 {
-	assert(align > 0);
-	U8 mask = align - 1;
-	assert((align& mask) == 0); // Ensure power of 2
+	assert(a > 0);
+	int check = a & (a - 1);
+	assert(check == 0); // Power of 2
+}
+
+uintptr_t Align(uintptr_t addr, Alignment align)
+{
+	int mask = align.getValue() - 1;
 	return (addr + mask) & ~mask;
 }

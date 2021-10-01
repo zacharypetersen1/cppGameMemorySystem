@@ -4,29 +4,34 @@
 
 MemorySystem gMemSystem;
 
-void* operator new(size_t size, U8 align, Allocator allocType)
+void* operator new(size_t size, Alignment align, Allocator allocType)
 {
 	return gMemSystem.alloc(size, align, allocType);
 }
-void* operator new[](size_t size, U8 align, Allocator allocType)
+void* operator new[](size_t size, Alignment align, Allocator allocType)
 {
 	return gMemSystem.alloc(size, align, allocType);
 }
 
+class bar
+{
+	U8 foo;
+};
+
 class foo
 {
 private:
-	int bar;
-	float baz;
+	U32 bar;
+	U32 baz;
 };
 
 int main()
 {
 	gMemSystem.startup();
 	gMemSystem.print();
-	foo* pFoo = new(4, Allocator::oneFrame) foo();
+	foo* pFoo = new(Alignment(16), Allocator::oneFrame) foo();
 	std::cout << "pFoo:" << std::hex << pFoo << std::endl;
-	foo* pFoo2 = new(4, Allocator::oneFrame) foo();
+	foo* pFoo2 = new(Alignment(16), Allocator::oneFrame) foo();
 	std::cout << "pFoo2:" << std::hex << pFoo2 << std::endl;
 
 	gMemSystem.clearFrameMemory();

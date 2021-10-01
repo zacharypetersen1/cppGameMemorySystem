@@ -22,7 +22,7 @@ void MemorySystem::print()
 	persistantAlloc.print();
 }
 
-void* MemorySystem::alloc(size_t size, U8 align, Allocator allocType)
+void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 {
 	// TODO Assert that alignment is power of 2
 

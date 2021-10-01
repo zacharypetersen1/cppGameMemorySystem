@@ -35,6 +35,6 @@ public:
 	void print();
 
 	// Allocates object of given size with given alignment
-	void* alloc(size_t size, U8 align);
+	void* alloc(size_t size, Alignment align);
 };
 

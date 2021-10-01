@@ -1,4 +1,5 @@
 #include "StackAllocator.h"
+#include "MemoryUtils.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <iostream>
@@ -31,7 +32,7 @@ void StackAllocator::print()
 	}
 }
 
-void* StackAllocator::alloc(size_t size, U8 align)
+void* StackAllocator::alloc(size_t size, Alignment align)
 {
 	// Get aligned position on stack for this alloc
 	uintptr_t ptr = Align(top, align);
