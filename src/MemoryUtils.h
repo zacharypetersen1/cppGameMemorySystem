@@ -1,5 +1,4 @@
 #pragma once
-#include "Types.h"
 #include <assert.h>
 
 class Alignment

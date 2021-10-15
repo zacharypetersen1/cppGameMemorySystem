@@ -1,4 +1,5 @@
 #include "MemoryGlobals.h"
+#include "Types.h"
 #include <stdlib.h>
 #include <iostream>
 
