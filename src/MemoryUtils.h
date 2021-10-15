@@ -5,7 +5,7 @@
 class Alignment
 {
 public:
-	Alignment(int a);
+	explicit Alignment(int a);
 	inline int getValue() { return value; }
 private:
 	int value;

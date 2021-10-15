@@ -25,9 +25,9 @@ int main()
 
 	gMemSystem.clearFrameMemory();
 
-	foo* pFoo3 = new(4, Allocator::oneFrame) foo();
+	foo* pFoo3 = new(Alignment(4), Allocator::oneFrame) foo();
 	std::cout << "pFoo3:" << std::hex << pFoo3 << std::endl;
-	foo* pFoo4 = new(4, Allocator::oneFrame) foo();
+	foo* pFoo4 = new(Alignment(4), Allocator::oneFrame) foo();
 	std::cout << "pFoo4:" << std::hex << pFoo4 << std::endl;
 
 	gMemSystem.shutdown();
