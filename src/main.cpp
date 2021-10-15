@@ -1,17 +1,6 @@
-#include "MemorySystem.h"
+#include "MemoryGlobals.h"
 #include <stdlib.h>
 #include <iostream>
-
-MemorySystem gMemSystem;
-
-void* operator new(size_t size, Alignment align, Allocator allocType)
-{
-	return gMemSystem.alloc(size, align, allocType);
-}
-void* operator new[](size_t size, Alignment align, Allocator allocType)
-{
-	return gMemSystem.alloc(size, align, allocType);
-}
 
 class bar
 {

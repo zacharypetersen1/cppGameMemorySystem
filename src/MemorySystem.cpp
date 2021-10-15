@@ -37,5 +37,6 @@ void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 		return dynamicAlloc.alloc(size, align);
 	default:
 		assert(0 == 1, "No alloc function for give alloc type was defined.");
+		return nullptr;
 	}
 }
