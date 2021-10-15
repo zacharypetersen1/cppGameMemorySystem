@@ -16,18 +16,26 @@ private:
 
 int main()
 {
+	// gMemorySystem provides access to global memory system.
+	// Startup will allocate the memory block that it uses.
 	gMemSystem.startup();
 	gMemSystem.print();
-	foo* pFoo = new(Alignment(16), Allocator::oneFrame) foo();
+
+	// Set gAllocator to control what type of memory the global
+	// new operator will allocate to.
+	gAllocator = Allocator::oneFrame;
+	foo* pFoo = new foo();
 	std::cout << "pFoo:" << std::hex << pFoo << std::endl;
-	foo* pFoo2 = new(Alignment(16), Allocator::oneFrame) foo();
+	foo* pFoo2 = new foo();
 	std::cout << "pFoo2:" << std::hex << pFoo2 << std::endl;
 
+	// Call clearFrameMemory after the frame is done to clear
+	// single frame memory region.
 	gMemSystem.clearFrameMemory();
 
-	foo* pFoo3 = new(Alignment(4), Allocator::oneFrame) foo();
+	foo* pFoo3 = new foo();
 	std::cout << "pFoo3:" << std::hex << pFoo3 << std::endl;
-	foo* pFoo4 = new(Alignment(4), Allocator::oneFrame) foo();
+	foo* pFoo4 = new foo();
 	std::cout << "pFoo4:" << std::hex << pFoo4 << std::endl;
 
 	gMemSystem.shutdown();
