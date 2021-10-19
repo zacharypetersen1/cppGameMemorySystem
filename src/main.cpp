@@ -24,7 +24,7 @@ int main()
 
 	// Set gAllocator to control what type of memory the global
 	// new operator will allocate to.
-	gAllocator = Allocator::oneFrame;
+	gAllocator = GameMemorySystem::Allocator::oneFrame;
 	foo* pFoo = new foo();
 	std::cout << "pFoo:" << std::hex << pFoo << std::endl;
 	foo* pFoo2 = new foo();

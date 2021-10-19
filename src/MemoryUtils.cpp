@@ -1,5 +1,7 @@
 #include "MemoryUtils.h"
 
+namespace GameMemorySystem
+{
 Alignment::Alignment(int a) : value(a)
 {
 	assert(a > 0);
@@ -11,4 +13,5 @@ uintptr_t Align(uintptr_t addr, Alignment align)
 {
 	int mask = align.getValue() - 1;
 	return (addr + mask) & ~mask;
+}
 }

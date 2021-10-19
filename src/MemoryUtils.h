@@ -1,6 +1,8 @@
 #pragma once
 #include <assert.h>
 
+namespace GameMemorySystem
+{
 class Alignment
 {
 public:
@@ -12,3 +14,4 @@ private:
 
 enum class Allocator { dynamic, oneFrame, persistant };
 uintptr_t Align(uintptr_t addr, Alignment align);
+}

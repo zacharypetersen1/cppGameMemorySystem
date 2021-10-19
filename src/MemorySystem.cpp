@@ -1,6 +1,8 @@
 #include "MemorySystem.h"
 #include <assert.h>
 
+namespace GameMemorySystem
+{
 void MemorySystem::startup()
 {
 	dynamicAlloc.init(32);
@@ -39,4 +41,5 @@ void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 		assert(0 == 1, "No alloc function for give alloc type was defined.");
 		return nullptr;
 	}
+}
 }

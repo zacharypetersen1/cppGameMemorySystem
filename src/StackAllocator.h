@@ -1,6 +1,8 @@
 #pragma once
 #include "MemoryUtils.h"
 
+namespace GameMemorySystem
+{
 class StackAllocator
 {
 private:
@@ -21,7 +23,7 @@ public:
 	// Don't allow copying
 	StackAllocator(const StackAllocator&) = delete;
 	StackAllocator& operator=(const StackAllocator&) = delete;
-	
+
 	// Creates the memory block
 	void init(size_t bytes);
 
@@ -37,4 +39,4 @@ public:
 	// Allocates object of given size with given alignment
 	void* alloc(size_t size, Alignment align);
 };
-
+}

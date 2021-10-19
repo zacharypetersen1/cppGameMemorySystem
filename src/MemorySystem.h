@@ -3,6 +3,8 @@
 #include "StackAllocator.h"
 #include "MemoryUtils.h"
 
+namespace GameMemorySystem
+{
 class MemorySystem
 {
 private:
@@ -17,3 +19,4 @@ public:
 	void* alloc(size_t size, Alignment align, Allocator allocType);
 	void clearFrameMemory() { oneFrameAlloc.clear(); }
 };
+}

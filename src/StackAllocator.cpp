@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <iostream>
 
+namespace GameMemorySystem
+{
 void StackAllocator::init(size_t bytes)
 {
 	assert(bytes > 0);
@@ -36,7 +38,7 @@ void* StackAllocator::alloc(size_t size, Alignment align)
 {
 	// Get aligned position on stack for this alloc
 	uintptr_t ptr = Align(top, align);
-	
+
 	// Check if this alloc will excede size of stack
 	if (ptr + size > root + memSize)
 	{
@@ -45,4 +47,5 @@ void* StackAllocator::alloc(size_t size, Alignment align)
 
 	top = ptr + size;
 	return reinterpret_cast<void*>(ptr);
+}
 }

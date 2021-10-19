@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <iostream>
 
+namespace GameMemorySystem
+{
 void DynamicAllocator::init(size_t bytes)
 {
 	assert(bytes > 0);
@@ -27,4 +29,5 @@ void DynamicAllocator::print()
 void* DynamicAllocator::alloc(size_t size, Alignment align)
 {
 	return malloc(size);
+}
 }

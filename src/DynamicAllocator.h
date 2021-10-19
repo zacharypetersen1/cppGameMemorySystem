@@ -1,6 +1,7 @@
 #pragma once
 #include "MemoryUtils.h"
-
+namespace GameMemorySystem
+{
 class DynamicAllocator
 {
 private:
@@ -12,4 +13,4 @@ public:
 	void print();
 	void* alloc(size_t size, Alignment align);
 };
-
+}
