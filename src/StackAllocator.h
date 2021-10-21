@@ -6,16 +6,16 @@ namespace GameMemorySystem
 class StackAllocator
 {
 private:
-	// Ptr to the beginning of memory block
+	// Ptr to the beginning of stack
 	void* pMem = nullptr;
 
-	// Size of memory block in bytes
-	size_t memSize = 0;
+	// Size of stack in bytes
+	size_t stackSize = 0;
 
-	// Root location of the memory block
+	// Root location of the stack
 	uintptr_t root = 0;
 
-	// Top location of stack on the memory block
+	// Top location of stack
 	uintptr_t top = 0;
 
 public:
@@ -25,10 +25,7 @@ public:
 	StackAllocator& operator=(const StackAllocator&) = delete;
 
 	// Creates the memory block
-	void init(size_t bytes);
-
-	// Destroys the memory block
-	void destroy();
+	void init(void* memStart, size_t bytes);
 
 	// Clears the stack
 	void clear();

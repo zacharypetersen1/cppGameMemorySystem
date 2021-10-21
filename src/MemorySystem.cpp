@@ -1,27 +1,33 @@
 #include "MemorySystem.h"
 #include <assert.h>
+#include <stdlib.h>
 
 namespace GameMemorySystem
 {
-void MemorySystem::startup()
+void MemorySystem::startup(size_t dynamicMemBytes, size_t persistantMemBytes, size_t oneFrameMemBytes)
 {
-	dynamicAlloc.init(32);
-	oneFrameAlloc.init(32);
-	persistantAlloc.init(32);
+	size_t totalBytes = dynamicMemBytes + persistantMemBytes + oneFrameMemBytes;
+	pMemBlock = malloc(totalBytes);
+
+	// Use char ptr to figure out where each allocator's memory region should start
+	char* pBytePtr = static_cast<char*>(pMemBlock);
+	dynamicAlloc.init(pBytePtr, dynamicMemBytes);
+	pBytePtr += dynamicMemBytes;
+	persistantAlloc.init(pBytePtr, persistantMemBytes);
+	pBytePtr += persistantMemBytes;
+	oneFrameAlloc.init(pBytePtr, oneFrameMemBytes);
 }
 
 void MemorySystem::shutdown()
 {
-	dynamicAlloc.destroy();
-	oneFrameAlloc.destroy();
-	persistantAlloc.destroy();
+	free(pMemBlock);
 }
 
 void MemorySystem::print()
 {
 	dynamicAlloc.print();
-	oneFrameAlloc.print();
 	persistantAlloc.print();
+	oneFrameAlloc.print();
 }
 
 void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)

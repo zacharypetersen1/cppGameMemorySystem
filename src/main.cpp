@@ -19,7 +19,7 @@ int main()
 {
 	// gMemorySystem provides access to global memory system.
 	// Startup will allocate the memory block that it uses.
-	gMemSystem.startup();
+	gMemSystem.startup(64, 32, 32);
 	gMemSystem.print();
 
 	// Set gAllocator to control what type of memory the global

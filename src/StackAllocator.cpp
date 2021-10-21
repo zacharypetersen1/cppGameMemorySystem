@@ -6,18 +6,12 @@
 
 namespace GameMemorySystem
 {
-void StackAllocator::init(size_t bytes)
+void StackAllocator::init(void* pMemStart, size_t bytes)
 {
-	assert(bytes > 0);
-	memSize = bytes;
-	pMem = malloc(bytes);
+	pMem = pMemStart;
+	stackSize = bytes;
 	root = reinterpret_cast<uintptr_t>(pMem);
 	top = root;
-}
-
-void StackAllocator::destroy()
-{
-	free(pMem);
 }
 
 void StackAllocator::clear()
@@ -27,8 +21,8 @@ void StackAllocator::clear()
 
 void StackAllocator::print()
 {
-	std::cout << std::dec << "MemStack size: " << memSize << std::endl;
-	for (size_t i = 0; i < memSize; ++i)
+	std::cout << std::dec << "MemStack size: " << stackSize << std::endl;
+	for (size_t i = 0; i < stackSize; ++i)
 	{
 		std::cout << std::hex << (size_t)pMem + i << std::dec << ":\n";
 	}
@@ -40,7 +34,7 @@ void* StackAllocator::alloc(size_t size, Alignment align)
 	uintptr_t ptr = Align(top, align);
 
 	// Check if this alloc will excede size of stack
-	if (ptr + size > root + memSize)
+	if (ptr + size > root + stackSize)
 	{
 		throw std::bad_alloc();
 	}

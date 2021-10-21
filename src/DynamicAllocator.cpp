@@ -5,16 +5,10 @@
 
 namespace GameMemorySystem
 {
-void DynamicAllocator::init(size_t bytes)
+void DynamicAllocator::init(void* pMemStart, size_t bytes)
 {
-	assert(bytes > 0);
+	pMem = pMemStart;
 	size = bytes;
-	pMem = malloc(bytes);
-}
-
-void DynamicAllocator::destroy()
-{
-	free(pMem);
 }
 
 void DynamicAllocator::print()
