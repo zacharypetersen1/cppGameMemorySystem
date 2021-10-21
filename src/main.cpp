@@ -33,12 +33,11 @@ int main()
 	// Call clearFrameMemory after the frame is done to clear
 	// single frame memory region.
 	gMemSystem.clearFrameMemory();
-
+	
 	foo* pFoo3 = new foo();
 	std::cout << "pFoo3:" << std::hex << pFoo3 << std::endl;
 	foo* pFoo4 = new foo();
 	std::cout << "pFoo4:" << std::hex << pFoo4 << std::endl;
-
 	gMemSystem.shutdown();
 	return 0;
 }
