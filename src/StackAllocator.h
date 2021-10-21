@@ -20,10 +20,14 @@ private:
 	uintptr_t m_top = 0;
 
 public:
+	// Make sure default constructor is added because we are deleting other constructors below.
 	StackAllocator() = default;
-	// Don't allow copying
+
+	// Delete copy & move constructors/assignment operators
 	StackAllocator(const StackAllocator&) = delete;
 	StackAllocator& operator=(const StackAllocator&) = delete;
+	StackAllocator(StackAllocator&&) = delete;
+	StackAllocator& operator=(StackAllocator&&) = delete;
 
 	// Initializes stack for use
 	void init(void* memStart, size_t bytes);

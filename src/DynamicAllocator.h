@@ -12,6 +12,15 @@ private:
 	// Size in bytes of this allocator's memory region
 	size_t m_size;
 public:
+	// Make sure default constructor is added because we are deleting other constructors below.
+	DynamicAllocator() = default;
+
+	// Delete copy & move constructors/assignment operators
+	DynamicAllocator(const DynamicAllocator&) = delete;
+	DynamicAllocator& operator=(const DynamicAllocator&) = delete;
+	DynamicAllocator(DynamicAllocator&&) = delete;
+	DynamicAllocator& operator=(DynamicAllocator&&) = delete;
+
 	// Initializes allocator for use
 	void init(void* pMemLocation, size_t bytes);
 

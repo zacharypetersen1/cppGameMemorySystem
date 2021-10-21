@@ -25,6 +25,15 @@ private:
 	size_t m_totalBytes;
 
 public:
+	// Make sure default constructor is added because we are deleting other constructors below.
+	MemorySystem() = default;
+
+	// Delete copy & move constructors/assignment operators
+	MemorySystem(const MemorySystem&) = delete;
+	MemorySystem& operator=(const MemorySystem&) = delete;
+	MemorySystem(MemorySystem&&) = delete;
+	MemorySystem& operator=(MemorySystem&&) = delete;
+
 	// Allocates the memory block and sets up the memory system for use.
 	// Use the parameters to specify how many bytes each allocator should recieve.
 	void startup(size_t dynamicMemBytes, size_t persistantMemBytes, size_t oneFrameMemBytes);
