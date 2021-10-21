@@ -21,7 +21,7 @@ void* operator new(size_t size)
 	return gMemSystem.alloc(size, GameMemorySystem::Alignment(gDefaultAlign), gAllocator);
 }
 
-void* operator new[](size_t size)
+void* operator new[](size_t m_size)
 {
-	return gMemSystem.alloc(size, GameMemorySystem::Alignment(gDefaultAlign), gAllocator);
+	return gMemSystem.alloc(m_size, GameMemorySystem::Alignment(gDefaultAlign), gAllocator);
 }

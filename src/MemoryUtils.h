@@ -3,15 +3,19 @@
 
 namespace GameMemorySystem
 {
+// Used to specify alignment when making allocations
 class Alignment
 {
 public:
 	explicit Alignment(int a);
-	inline int getValue() { return value; }
+	inline int getValue() { return m_value; }
 private:
-	int value;
+	int m_value;
 };
 
+// The different types of allocators to choose from
 enum class Allocator { dynamic, oneFrame, persistant };
+
+// Returns address itself if already aligned or the next aligned address.
 uintptr_t Align(uintptr_t addr, Alignment align);
 }

@@ -7,16 +7,16 @@ namespace GameMemorySystem
 {
 void DynamicAllocator::init(void* pMemStart, size_t bytes)
 {
-	pMem = pMemStart;
-	size = bytes;
+	m_pMem = pMemStart;
+	m_size = bytes;
 }
 
 void DynamicAllocator::print()
 {
-	std::cout << "MemHeap size: " << std::dec << size << std::endl;
-	for (size_t i = 0; i < size; ++i)
+	std::cout << "MemHeap size: " << std::dec << m_size << std::endl;
+	for (size_t i = 0; i < m_size; ++i)
 	{
-		std::cout << std::hex << (size_t)pMem + i << std::dec << ":\n";
+		std::cout << std::hex << (size_t)m_pMem + i << std::dec << ":\n";
 	}
 }
 

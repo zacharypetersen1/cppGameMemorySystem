@@ -3,20 +3,21 @@
 
 namespace GameMemorySystem
 {
+// Simple allocator where memory is freed in FIFO order
 class StackAllocator
 {
 private:
 	// Ptr to the beginning of stack
-	void* pMem = nullptr;
+	void* m_pMem = nullptr;
 
 	// Size of stack in bytes
-	size_t stackSize = 0;
+	size_t m_size = 0;
 
 	// Root location of the stack
-	uintptr_t root = 0;
+	uintptr_t m_root = 0;
 
 	// Top location of stack
-	uintptr_t top = 0;
+	uintptr_t m_top = 0;
 
 public:
 	StackAllocator() = default;
@@ -24,7 +25,7 @@ public:
 	StackAllocator(const StackAllocator&) = delete;
 	StackAllocator& operator=(const StackAllocator&) = delete;
 
-	// Creates the memory block
+	// Initializes stack for use
 	void init(void* memStart, size_t bytes);
 
 	// Clears the stack

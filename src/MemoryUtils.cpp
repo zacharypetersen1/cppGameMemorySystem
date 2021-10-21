@@ -2,7 +2,7 @@
 
 namespace GameMemorySystem
 {
-Alignment::Alignment(int a) : value(a)
+Alignment::Alignment(int a) : m_value(a)
 {
 	assert(a > 0);
 	int check = a & (a - 1);

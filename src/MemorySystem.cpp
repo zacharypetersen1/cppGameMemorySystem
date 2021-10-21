@@ -4,45 +4,43 @@
 
 namespace GameMemorySystem
 {
-void MemorySystem::startup(size_t dynamicMemBytes, size_t persistantMemBytes, size_t oneFrameMemBytes)
+void MemorySystem::startup(size_t dynamicBytes, size_t persistantBytes, size_t oneFrameBytes)
 {
-	size_t totalBytes = dynamicMemBytes + persistantMemBytes + oneFrameMemBytes;
-	pMemBlock = malloc(totalBytes);
+	size_t m_totalBytes = dynamicBytes + persistantBytes + oneFrameBytes;
+	m_pMemBlock = malloc(m_totalBytes);
 
 	// Use char ptr to figure out where each allocator's memory region should start
-	char* pBytePtr = static_cast<char*>(pMemBlock);
-	dynamicAlloc.init(pBytePtr, dynamicMemBytes);
-	pBytePtr += dynamicMemBytes;
-	persistantAlloc.init(pBytePtr, persistantMemBytes);
-	pBytePtr += persistantMemBytes;
-	oneFrameAlloc.init(pBytePtr, oneFrameMemBytes);
+	char* pBytePtr = static_cast<char*>(m_pMemBlock);
+	m_dynamicAlloc.init(pBytePtr, dynamicBytes);
+	pBytePtr += dynamicBytes;
+	m_persistantAlloc.init(pBytePtr, persistantBytes);
+	pBytePtr += persistantBytes;
+	m_oneFrameAlloc.init(pBytePtr, oneFrameBytes);
 }
 
 void MemorySystem::shutdown()
 {
-	free(pMemBlock);
+	free(m_pMemBlock);
 }
 
 void MemorySystem::print()
 {
-	dynamicAlloc.print();
-	persistantAlloc.print();
-	oneFrameAlloc.print();
+	m_dynamicAlloc.print();
+	m_persistantAlloc.print();
+	m_oneFrameAlloc.print();
 }
 
 void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 {
-	// TODO Assert that alignment is power of 2
-
 	// Select allocator
 	switch (allocType)
 	{
 	case Allocator::dynamic:
-		return dynamicAlloc.alloc(size, align);
+		return m_dynamicAlloc.alloc(size, align);
 	case Allocator::oneFrame:
-		return oneFrameAlloc.alloc(size, align);
+		return m_oneFrameAlloc.alloc(size, align);
 	case Allocator::persistant:
-		return dynamicAlloc.alloc(size, align);
+		return m_dynamicAlloc.alloc(size, align);
 	default:
 		assert(0 == 1, "No alloc function for give alloc type was defined.");
 		return nullptr;
