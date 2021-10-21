@@ -16,7 +16,7 @@ private:
 	DynamicAllocator m_dynamicAlloc;
 
 	// Used to allocate to memory that is valid for the rest of the frame
-	StackAllocator m_oneFrameAlloc;
+	StackAllocator m_singleFrameAlloc;
 
 	// Used to allocate memory that will stay valid while the process is running
 	StackAllocator m_persistantAlloc;
@@ -39,6 +39,6 @@ public:
 	void* alloc(size_t m_size, Alignment align, Allocator allocType);
 
 	// Clears memory used by the single frame allocator
-	void clearFrameMemory() { m_oneFrameAlloc.clear(); }
+	void clearSingleFrameMemory() { m_singleFrameAlloc.clear(); }
 };
 }

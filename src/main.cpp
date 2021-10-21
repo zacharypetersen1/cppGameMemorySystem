@@ -24,15 +24,15 @@ int main()
 
 	// Set gAllocator to control what type of memory the global
 	// new operator will allocate to.
-	gAllocator = GameMemorySystem::Allocator::oneFrame;
+	gAllocator = GameMemorySystem::Allocator::singleFrame;
 	foo* pFoo = new foo();
 	std::cout << "pFoo:" << std::hex << pFoo << std::endl;
 	foo* pFoo2 = new foo();
 	std::cout << "pFoo2:" << std::hex << pFoo2 << std::endl;
 
-	// Call clearFrameMemory after the frame is done to clear
+	// Call clearSingleFrameMemory after the frame is done to clear
 	// single frame memory region.
-	gMemSystem.clearFrameMemory();
+	gMemSystem.clearSingleFrameMemory();
 	
 	foo* pFoo3 = new foo();
 	std::cout << "pFoo3:" << std::hex << pFoo3 << std::endl;

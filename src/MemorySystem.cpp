@@ -15,7 +15,7 @@ void MemorySystem::startup(size_t dynamicBytes, size_t persistantBytes, size_t o
 	pBytePtr += dynamicBytes;
 	m_persistantAlloc.init(pBytePtr, persistantBytes);
 	pBytePtr += persistantBytes;
-	m_oneFrameAlloc.init(pBytePtr, oneFrameBytes);
+	m_singleFrameAlloc.init(pBytePtr, oneFrameBytes);
 }
 
 void MemorySystem::shutdown()
@@ -27,7 +27,7 @@ void MemorySystem::print()
 {
 	m_dynamicAlloc.print();
 	m_persistantAlloc.print();
-	m_oneFrameAlloc.print();
+	m_singleFrameAlloc.print();
 }
 
 void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
@@ -37,8 +37,8 @@ void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 	{
 	case Allocator::dynamic:
 		return m_dynamicAlloc.alloc(size, align);
-	case Allocator::oneFrame:
-		return m_oneFrameAlloc.alloc(size, align);
+	case Allocator::singleFrame:
+		return m_singleFrameAlloc.alloc(size, align);
 	case Allocator::persistant:
 		return m_dynamicAlloc.alloc(size, align);
 	default:
