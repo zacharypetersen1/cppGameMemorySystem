@@ -9,7 +9,7 @@ extern GameMemorySystem::MemorySystem gMemSystem;
 extern GameMemorySystem::Allocator gAllocator;
 
 // The default alignment that will be used if none is specified.
-extern int gDefaultAlign;
+extern GameMemorySystem::Alignment gDefaultAlignment;
 
 // Varient of new operator allowing alignment and Allocator to be specified.
 void* operator new(size_t size, GameMemorySystem::Alignment align, GameMemorySystem::Allocator allocType);

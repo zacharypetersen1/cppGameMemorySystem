@@ -4,7 +4,7 @@
 
 GameMemorySystem::Allocator gAllocator = GameMemorySystem::Allocator::dynamic;
 GameMemorySystem::MemorySystem gMemSystem;
-int gDefaultAlign = 16;
+GameMemorySystem::Alignment gDefaultAlignment = GameMemorySystem::Alignment(16);
 
 void* operator new(size_t size, GameMemorySystem::Alignment align, GameMemorySystem::Allocator allocType)
 {
@@ -18,10 +18,10 @@ void* operator new[](size_t size, GameMemorySystem::Alignment align, GameMemoryS
 
 void* operator new(size_t size)
 {
-	return gMemSystem.alloc(size, GameMemorySystem::Alignment(gDefaultAlign), gAllocator);
+	return gMemSystem.alloc(size, gDefaultAlignment, gAllocator);
 }
 
 void* operator new[](size_t m_size)
 {
-	return gMemSystem.alloc(m_size, GameMemorySystem::Alignment(gDefaultAlign), gAllocator);
+	return gMemSystem.alloc(m_size, gDefaultAlignment, gAllocator);
 }
