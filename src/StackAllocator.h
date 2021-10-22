@@ -8,7 +8,7 @@ class StackAllocator
 {
 private:
 	// Ptr to the beginning of stack
-	void* m_pMem = nullptr;
+	U8* m_pMem = nullptr;
 
 	// Size of stack in bytes
 	size_t m_size = 0;
@@ -30,7 +30,7 @@ public:
 	StackAllocator& operator=(StackAllocator&&) = delete;
 
 	// Initializes stack for use
-	void init(void* memStart, size_t bytes);
+	void init(U8* memStart, size_t bytes);
 
 	// Clears the stack
 	void clear();

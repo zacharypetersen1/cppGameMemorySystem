@@ -6,7 +6,7 @@
 
 namespace GameMemorySystem
 {
-void StackAllocator::init(void* pMemStart, size_t bytes)
+void StackAllocator::init(U8* pMemStart, size_t bytes)
 {
 	m_pMem = pMemStart;
 	m_size = bytes;

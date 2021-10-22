@@ -5,7 +5,7 @@
 
 namespace GameMemorySystem
 {
-void DynamicAllocator::init(void* pMemStart, size_t bytes)
+void DynamicAllocator::init(U8* pMemStart, size_t bytes)
 {
 	m_pMem = pMemStart;
 	m_size = bytes;

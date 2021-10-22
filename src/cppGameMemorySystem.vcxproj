@@ -153,7 +153,6 @@
     <ClInclude Include="DynamicAllocator.h" />
     <ClInclude Include="MemorySystem.h" />
     <ClInclude Include="StackAllocator.h" />
-    <ClInclude Include="Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

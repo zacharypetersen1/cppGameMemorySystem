@@ -1,8 +1,12 @@
 #pragma once
 #include <assert.h>
+#include <cstdint>
 
 namespace GameMemorySystem
 {
+// Type defines
+typedef uint8_t U8;
+
 // Used to specify alignment when making allocations
 class Alignment
 {

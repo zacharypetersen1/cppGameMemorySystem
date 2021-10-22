@@ -10,7 +10,7 @@ void MemorySystem::startup(size_t dynamicBytes, size_t persistantBytes, size_t o
 	m_pMemBlock = malloc(m_totalBytes);
 
 	// Use char ptr to figure out where each allocator's memory region should start
-	char* pBytePtr = static_cast<char*>(m_pMemBlock);
+	U8* pBytePtr = static_cast<U8*>(m_pMemBlock);
 	m_dynamicAlloc.init(pBytePtr, dynamicBytes);
 	pBytePtr += dynamicBytes;
 	m_persistantAlloc.init(pBytePtr, persistantBytes);

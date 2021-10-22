@@ -1,18 +1,16 @@
 #include "MemoryGlobals.h"
-#include "Types.h"
-#include <stdlib.h>
 #include <iostream>
 
 class bar
 {
-	U8 foo;
+	char foo;
 };
 
 class foo
 {
 private:
-	U32 bar;
-	U32 baz;
+	int bar;
+	int baz;
 };
 
 int main()
