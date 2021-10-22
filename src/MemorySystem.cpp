@@ -23,7 +23,7 @@ void MemorySystem::shutdown()
 	free(m_pMemBlock);
 }
 
-void MemorySystem::print()
+void MemorySystem::print() const
 {
 	m_dynamicAlloc.print();
 	m_persistantAlloc.print();

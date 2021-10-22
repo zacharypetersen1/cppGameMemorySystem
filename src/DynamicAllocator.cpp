@@ -11,7 +11,7 @@ void DynamicAllocator::init(void* pMemStart, size_t bytes)
 	m_size = bytes;
 }
 
-void DynamicAllocator::print()
+void DynamicAllocator::print() const
 {
 	std::cout << "MemHeap size: " << std::dec << m_size << std::endl;
 	for (size_t i = 0; i < m_size; ++i)

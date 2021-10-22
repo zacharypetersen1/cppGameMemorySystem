@@ -25,7 +25,7 @@ public:
 	void init(void* pMemLocation, size_t bytes);
 
 	// Prints debug info about memory block
-	void print();
+	void print() const;
 
 	// Allocates object of given size with given alignment
 	void* alloc(size_t size, Alignment align);

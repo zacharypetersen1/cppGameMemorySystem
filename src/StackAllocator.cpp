@@ -19,7 +19,7 @@ void StackAllocator::clear()
 	m_top = m_root;
 }
 
-void StackAllocator::print()
+void StackAllocator::print() const
 {
 	std::cout << std::dec << "MemStack size: " << m_size << std::endl;
 	for (size_t i = 0; i < m_size; ++i)

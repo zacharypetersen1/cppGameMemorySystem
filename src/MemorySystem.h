@@ -42,7 +42,7 @@ public:
 	void shutdown();
 
 	// Prints out debug information about the memory block
-	void print();
+	void print() const;
 
 	// Allocates memory using the specified allocator
 	void* alloc(size_t m_size, Alignment align, Allocator allocType);

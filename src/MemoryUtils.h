@@ -6,11 +6,11 @@ namespace GameMemorySystem
 // Used to specify alignment when making allocations
 class Alignment
 {
-public:
-	explicit Alignment(int a);
-	inline int getValue() { return m_value; }
 private:
 	int m_value;
+public:
+	explicit Alignment(int a);
+	inline int getValue() const { return m_value; }
 };
 
 // The different types of allocators to choose from
