@@ -6,16 +6,6 @@
 
 namespace GameMemorySystem
 {
-void BlockHeader::init(bool isFree, U8 alignOffset, size_t size)
-{
-	// Combine isFree and alignOffset
-	U8 isFreeU8 = static_cast<U8>(isFree);
-	U8 shiftedOffset = alignOffset << 1;
-	m_isFreeAndAlignOffset = isFreeU8 | shiftedOffset;
-
-	// Store size
-	m_size = size;
-}
 
 void DynamicAllocator::init(U8* pMemStart, size_t bytes)
 {
@@ -36,4 +26,5 @@ void* DynamicAllocator::alloc(size_t size, Alignment align)
 {
 	return malloc(size);
 }
+
 }

@@ -20,7 +20,7 @@ private:
 	uintptr_t m_top = 0;
 
 public:
-	// Make sure default constructor is added because we are deleting other constructors below.
+	// Make sure default constructor is added.
 	StackAllocator() = default;
 
 	// Delete copy & move constructors/assignment operators
