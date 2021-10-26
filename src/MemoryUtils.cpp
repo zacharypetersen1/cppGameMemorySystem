@@ -9,6 +9,11 @@ Alignment::Alignment(int a) : m_value(a)
 	assert(check == 0); // Power of 2
 }
 
+size_t getMaxPayloadSize(size_t size, Alignment align)
+{
+	return size + align.getValue();
+}
+
 uintptr_t Align(uintptr_t addr, Alignment align)
 {
 	int mask = align.getValue() - 1;
