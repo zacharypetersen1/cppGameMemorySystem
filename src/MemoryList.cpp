@@ -5,11 +5,8 @@
 namespace GameMemorySystem
 {
 
-constexpr metadata_type listStartMeta = sizeof(metadata_type) << 1;
-constexpr metadata_type listEndMeta = (sizeof(metadata_type) << 1) | 1;
-
 // Writes the given metadata into the given location
-void writeMetadata(metadata_type* pLocation, bool isFree, size_t size)
+void MemoryList::writeMetadata(metadata_type* pLocation, bool isFree, size_t size)
 {
 	// Ensure that size does not exceed storage space in header
 	// One bit stores "Free" flag so we have sizeof(metadata_type) * 8 - 1 bits
@@ -25,7 +22,7 @@ void writeMetadata(metadata_type* pLocation, bool isFree, size_t size)
 
 // Writes metadata that defines the start and end of a memory block.
 // Returns ptr to the header of the block
-blockPtr createMemoryBlock(U8* pStart, bool isFree, size_t size)
+blockPtr MemoryList::createMemoryBlock(U8* pStart, bool isFree, size_t size)
 {
 	assert(size >= minBlockSize);
 
@@ -37,30 +34,29 @@ blockPtr createMemoryBlock(U8* pStart, bool isFree, size_t size)
 	return pHeader;
 }
 
-blockPtr createMemoryList(U8* pMemStart, size_t size)
+void MemoryList::init(U8* pMemStart, size_t size)
 {
-	metadata_type* pListStart = reinterpret_cast<metadata_type*>(pMemStart);
-	*pListStart = listStartMeta;
+	m_pListStart = reinterpret_cast<blockPtr>(pMemStart);
+	*m_pListStart = listStartMeta;
 	U8* pMemEnd = pMemStart + size;
-	metadata_type* pListEnd = reinterpret_cast<metadata_type*>(pMemEnd - sizeof(metadata_type));
-	*pListEnd = listEndMeta;
+	m_pListEnd = reinterpret_cast<blockPtr>(pMemEnd - sizeof(metadata_type));
+	*m_pListEnd = listEndMeta;
 	U8* pFirstBlockStart = pMemStart + sizeof(metadata_type);
 	size_t firstBlockSize = size - 2 * sizeof(metadata_type);
-	blockPtr pFirstBlock = createMemoryBlock(pFirstBlockStart, true, firstBlockSize);
-	return pFirstBlock;
+	createMemoryBlock(pFirstBlockStart, true, firstBlockSize);
 }
 
-bool isFree(const blockPtr pMetadata)
+bool MemoryList::isFree(const blockPtr pMetadata)
 {
 	return (*pMetadata & 1) > 0;
 }
 
-size_t getSize(const blockPtr pMetadata)
+size_t MemoryList::getSize(const blockPtr pMetadata)
 {
 	return *pMetadata >> 1;
 }
 
-blockPtr getPrevBlock(blockPtr pBlock)
+blockPtr MemoryList::getPrevBlock(blockPtr pBlock)
 {
 	assert(!isStartOfList(pBlock));
 
@@ -75,7 +71,7 @@ blockPtr getPrevBlock(blockPtr pBlock)
 	return pResult;
 }
 
-blockPtr getNextBlock(blockPtr pBlock)
+blockPtr MemoryList::getNextBlock(blockPtr pBlock)
 {
 	assert(!isEndOfList(pBlock));
 
@@ -88,16 +84,26 @@ blockPtr getNextBlock(blockPtr pBlock)
 }
 
 
-bool isStartOfList(const blockPtr bBlock)
+bool MemoryList::isStartOfList(const blockPtr bBlock)
 {
 	// Special case: Size is sizeOf(metadata_type) and isFree flag off
 	return *bBlock == listStartMeta;
 }
 
-bool isEndOfList(const blockPtr bBlock)
+bool MemoryList::isEndOfList(const blockPtr bBlock)
 {
 	// Special case: Size sizeOf(metadata_type) isFree flag on
 	return *bBlock == listEndMeta;
+}
+
+MemoryList::iterator MemoryList::begin()
+{
+	return iterator(m_pListStart);
+}
+
+MemoryList::iterator MemoryList::end()
+{
+	return iterator(m_pListEnd);
 }
 
 }

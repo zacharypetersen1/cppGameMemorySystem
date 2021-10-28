@@ -12,28 +12,110 @@ typedef size_t metadata_type;
 typedef metadata_type* blockPtr;
 
 // Minimum size of a memory block in bytes
-constexpr size_t minBlockSize = 4 * sizeof(metadata_type);
+constexpr size_t minBlockSize = 2 * sizeof(metadata_type) + 2 * sizeof(blockPtr);
 
-// Creates a memory list.
-// Returns memory block spanning the entire usable chunk of memory.
-blockPtr createMemoryList(U8* pMemStart, size_t size);
+// Maintains memory blocks in a list structure
+class MemoryList
+{
+private:
+	// Ptr to the start of the list
+	blockPtr m_pListStart = nullptr;
+	blockPtr m_pListEnd = nullptr;
 
-// Returns true if the block is free
-bool isFree(const blockPtr pMetadata);
+	// Special metadata values that indicate blocks lying at the start/end of list
+	static constexpr metadata_type listStartMeta = sizeof(metadata_type) << 1;
+	static constexpr metadata_type listEndMeta = (sizeof(metadata_type) << 1) | 1;
 
-// Returns the size of the block
-size_t getSize(const blockPtr pMetadata);
+private:
+	// Writes the given metadata into the given location
+	void writeMetadata(metadata_type* pLocation, bool isFree, size_t size);
 
-// Returns header of the next block
-blockPtr getPrevBlock(blockPtr pBlock);
+public:
+	class iterator
+	{
+	public:
+		blockPtr m_pBlockPtr;
+		
+		iterator() : m_pBlockPtr(nullptr) { }
+		iterator(blockPtr pBlockPtr) : m_pBlockPtr(pBlockPtr) { }
 
-// Returns header of the previous block
-blockPtr getNextBlock(blockPtr pBlock);
+		iterator& operator++()
+		{
+			m_pBlockPtr = getNextBlock(m_pBlockPtr);
+			return *this;
+		}
 
-// Returns true if given block is the first block
-bool isStartOfList(const blockPtr bBlock);
+		iterator operator++(int)
+		{
+			iterator temp = *this;
+			++*this;
+			return temp;
+		}
 
-// Returns true if given block is the last block
-bool isEndOfList(const blockPtr bBlock);
+		iterator& operator--()
+		{
+			m_pBlockPtr = getPrevBlock(m_pBlockPtr);
+			return *this;
+		}
+
+		iterator operator--(int)
+		{
+			iterator temp = *this;
+			--*this;
+			return temp;
+		}
+
+		bool operator==(const iterator& other)
+		{
+			return m_pBlockPtr == other.m_pBlockPtr;
+		}
+
+		bool operator!=(const iterator& other)
+		{
+			return !(*this == other);
+		}
+
+		blockPtr operator*()
+		{
+			return m_pBlockPtr;
+		}
+
+		blockPtr* operator->()
+		{
+			return &m_pBlockPtr;
+		}
+	};
+
+	// Writes metadata that defines the start and end of a memory block.
+	// Returns ptr to the header of the block
+	blockPtr createMemoryBlock(U8* pStart, bool isFree, size_t size);
+
+	// Initializes the memory list
+	void init(U8* pMemStart, size_t size);
+
+	// Returns begining of list
+	iterator begin();
+
+	// Returns end of the list
+	iterator end();
+
+	// Returns true if the block is free
+	static bool isFree(const blockPtr pMetadata);
+
+	// Returns the size of the block
+	static size_t getSize(const blockPtr pMetadata);
+
+	// Returns header of the next block
+	static blockPtr getPrevBlock(blockPtr pBlock);
+
+	// Returns header of the previous block
+	static blockPtr getNextBlock(blockPtr pBlock);
+
+	// Returns true if given block is the first block
+	static bool isStartOfList(const blockPtr bBlock);
+
+	// Returns true if given block is the last block
+	static bool isEndOfList(const blockPtr bBlock);
+};
 
 }

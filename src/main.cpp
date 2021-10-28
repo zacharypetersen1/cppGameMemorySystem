@@ -1,41 +1,18 @@
 #include "MemoryGlobals.h"
+#include "MemoryList.h"
+#include "MemoryUtils.h"
+#include <cstdlib>
 #include <iostream>
-
-class bar
-{
-	char foo;
-};
-
-class foo
-{
-private:
-	int bar;
-	int baz;
-};
 
 int main()
 {
-	// gMemorySystem provides access to global memory system.
-	// Startup will allocate the memory block that it uses.
-	gMemSystem.startup(64, 32, 32);
-	gMemSystem.print();
+	GameMemorySystem::U8* pMem = (GameMemorySystem::U8*)malloc(2048);
+	GameMemorySystem::MemoryList memList;
+	memList.init(pMem, 2048);
+	for (GameMemorySystem::blockPtr pBlock : memList)
+	{
+		std::cout << pBlock << "\n";
+	}
 
-	// Set gAllocator to control what type of memory the global
-	// new operator will allocate to.
-	gAllocator = GameMemorySystem::Allocator::singleFrame;
-	foo* pFoo = new foo();
-	std::cout << "pFoo:" << std::hex << pFoo << std::endl;
-	foo* pFoo2 = new foo();
-	std::cout << "pFoo2:" << std::hex << pFoo2 << std::endl;
-
-	// Call clearSingleFrameMemory after the frame is done to clear
-	// single frame memory region.
-	gMemSystem.clearSingleFrameMemory();
-	
-	foo* pFoo3 = new foo();
-	std::cout << "pFoo3:" << std::hex << pFoo3 << std::endl;
-	foo* pFoo4 = new foo();
-	std::cout << "pFoo4:" << std::hex << pFoo4 << std::endl;
-	gMemSystem.shutdown();
 	return 0;
 }
