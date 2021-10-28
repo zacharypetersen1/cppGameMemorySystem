@@ -5,6 +5,32 @@
 namespace GameMemorySystem
 {
 
+MemoryList::iterator& MemoryList::iterator::operator++()
+{
+	m_pBlockPtr = getNextBlock(m_pBlockPtr);
+	return *this;
+}
+
+MemoryList::iterator MemoryList::iterator::operator++(int)
+{
+	iterator temp = *this;
+	++* this;
+	return temp;
+}
+
+MemoryList::iterator& MemoryList::iterator::operator--()
+{
+	m_pBlockPtr = getPrevBlock(m_pBlockPtr);
+	return *this;
+}
+
+MemoryList::iterator MemoryList::iterator::operator--(int)
+{
+	iterator temp = *this;
+	--* this;
+	return temp;
+}
+
 // Writes the given metadata into the given location
 void MemoryList::writeMetadata(metadata_type* pLocation, bool isFree, size_t size)
 {
