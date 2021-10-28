@@ -124,7 +124,7 @@ bool MemoryList::isEndOfList(const blockPtr bBlock)
 
 MemoryList::iterator MemoryList::begin()
 {
-	return iterator(m_pListStart);
+	return iterator(getNextBlock(m_pListStart));
 }
 
 MemoryList::iterator MemoryList::end()

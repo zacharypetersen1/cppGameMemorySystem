@@ -52,10 +52,10 @@ public:
 	// Initializes the memory list
 	void init(U8* pMemStart, size_t size);
 
-	// Returns iterator to begining of list
+	// Returns iterator to the first block
 	iterator begin();
 
-	// Returns iterator to end of the list
+	// Returns iterator to block after the last block
 	iterator end();
 
 	// Writes the given metadata into the given location
