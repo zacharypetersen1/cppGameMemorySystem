@@ -45,12 +45,24 @@ public:
 		blockPtr* operator->() { return &m_pBlockPtr; }
 	};
 
+private:
+	// Splits given block into two blocks.
+	// Size given is the size of first new block in bytes.
+	void splitBlock(blockPtr pBlock, size_t sizeOfFirstSection);
+
+public:
 	// Writes metadata that defines the start and end of a memory block.
 	// Returns ptr to the header of the block
-	blockPtr createMemoryBlock(U8* pStart, bool isFree, size_t size);
+	blockPtr writeBlock(U8* pStart, bool isFree, size_t size);
 
 	// Initializes the memory list
 	void init(U8* pMemStart, size_t size);
+
+	// Allocates new memory block that will fit size bytes with given alignment
+	void* alloc(size_t size, Alignment alignment);
+
+	// Frees the memory block that given ptr lies within
+	void free(void* ptr);
 
 	// Returns iterator to the first block
 	iterator begin();

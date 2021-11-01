@@ -10,7 +10,7 @@ void StackAllocator::init(U8* pMemStart, size_t bytes)
 {
 	m_pMem = pMemStart;
 	m_size = bytes;
-	m_root = reinterpret_cast<uintptr_t>(m_pMem);
+	m_root = m_pMem;
 	m_top = m_root;
 }
 
@@ -31,7 +31,7 @@ void StackAllocator::print() const
 void* StackAllocator::alloc(size_t size, Alignment align)
 {
 	// Get aligned position on stack for this alloc
-	uintptr_t ptr = Align(m_top, align);
+	U8* ptr = Align(m_top, align);
 
 	// Check if this alloc will excede m_size of stack
 	if (ptr + size > m_root + m_size)
@@ -40,6 +40,6 @@ void* StackAllocator::alloc(size_t size, Alignment align)
 	}
 
 	m_top = ptr + size;
-	return reinterpret_cast<void*>(ptr);
+	return ptr;
 }
 }

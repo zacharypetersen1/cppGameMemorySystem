@@ -1,5 +1,6 @@
 #pragma once
 #include "MemoryUtils.h"
+#include "MemoryList.h"
 
 namespace GameMemorySystem
 {
@@ -13,6 +14,10 @@ private:
 
 	// Size in bytes of this allocator's memory region
 	size_t m_size;
+
+	// Structure that manages memory
+	MemoryList m_memList;
+
 public:
 	// Make sure default constructor is added
 	DynamicAllocator() = default;

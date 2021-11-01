@@ -1,6 +1,8 @@
 #include "MemoryList.h"
 #include "MemoryUtils.h"
 #include <cassert>
+#include <limits>
+#include <new>
 
 namespace GameMemorySystem
 {
@@ -48,7 +50,7 @@ void MemoryList::writeMetadata(metadata_type* pLocation, bool isFree, size_t siz
 
 // Writes metadata that defines the start and end of a memory block.
 // Returns ptr to the header of the block
-blockPtr MemoryList::createMemoryBlock(U8* pStart, bool isFree, size_t size)
+blockPtr MemoryList::writeBlock(U8* pStart, bool isFree, size_t size)
 {
 	assert(size >= minBlockSize);
 
@@ -69,7 +71,64 @@ void MemoryList::init(U8* pMemStart, size_t size)
 	*m_pListEnd = listEndMeta;
 	U8* pFirstBlockStart = pMemStart + sizeof(metadata_type);
 	size_t firstBlockSize = size - 2 * sizeof(metadata_type);
-	createMemoryBlock(pFirstBlockStart, true, firstBlockSize);
+	writeBlock(pFirstBlockStart, true, firstBlockSize);
+}
+
+void MemoryList::splitBlock(blockPtr pBlockToSplit, size_t sizeOfFirstBlock)
+{
+	size_t totalSize = getSize(pBlockToSplit);
+	size_t sizeOfSecondBlock = totalSize - sizeOfFirstBlock;
+
+	assert(isFree(pBlockToSplit));
+	assert(sizeOfSecondBlock >= minBlockSize);
+
+	U8* pFirstBlockStart = reinterpret_cast<U8*>(pBlockToSplit);
+	writeBlock(pFirstBlockStart, true, sizeOfFirstBlock);
+	U8* pSecondBlockStart = pFirstBlockStart + sizeOfFirstBlock;
+	writeBlock(pSecondBlockStart, true, sizeOfSecondBlock);
+}
+
+void* MemoryList::alloc(size_t size, Alignment alignment)
+{
+	// Look for smallest block that meets our size requirement
+	size_t requiredBlockSize = getMaxPayloadSize(size, alignment) + 2 * sizeof(metadata_type);
+	size_t smallestSuitableSize = std::numeric_limits<size_t>::max();
+	blockPtr pMostSuitableBlock = nullptr;
+	for (blockPtr pBlock : *this)
+	{
+		size_t blockSize = getSize(pBlock);
+		if (blockSize < smallestSuitableSize && blockSize >= requiredBlockSize)
+		{
+			pMostSuitableBlock = pBlock;
+			smallestSuitableSize = blockSize;
+		}
+	}
+
+	// Make sure we found a suitable block
+	if (pMostSuitableBlock == nullptr)
+	{
+		throw std::bad_alloc();
+	}
+
+	// Check if block should be split
+	if (getSize(pMostSuitableBlock) - requiredBlockSize >= minBlockSize)
+	{
+		splitBlock(pMostSuitableBlock, requiredBlockSize);
+	}
+
+	// Calc & write offset for alignment
+	U8* pPayloadStart = reinterpret_cast<U8*>(pMostSuitableBlock) + sizeof(metadata_type);
+	U8* pAlignedStart = AlignWithSpaceForPrefix(pPayloadStart, alignment);
+	U8 offset = pAlignedStart - pPayloadStart;
+	pPayloadStart[0] = offset;
+	pAlignedStart[-1] = offset;
+
+	return pAlignedStart;
+}
+
+void MemoryList::free(void* ptr)
+{
+
 }
 
 bool MemoryList::isFree(const blockPtr pMetadata)

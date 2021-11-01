@@ -21,9 +21,12 @@ public:
 enum class Allocator { dynamic, singleFrame, persistant };
 
 // Returns maximum possible payload size required to store
-// size bytes with given Alignment
+// "size" bytes with given Alignment
 size_t getMaxPayloadSize(size_t size, Alignment align);
 
 // Returns address itself if already aligned or the next aligned address.
-uintptr_t Align(uintptr_t addr, Alignment align);
+U8* Align(U8* pAddr, Alignment align);
+
+// Same as Align but ensures there is space for prefix to store alignment offset
+U8* AlignWithSpaceForPrefix(U8* pAddr, Alignment align);
 }

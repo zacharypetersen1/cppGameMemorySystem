@@ -14,10 +14,10 @@ private:
 	size_t m_size = 0;
 
 	// Root location of the stack
-	uintptr_t m_root = 0;
+	U8* m_root = 0;
 
 	// Top location of stack
-	uintptr_t m_top = 0;
+	U8* m_top = 0;
 
 public:
 	// Make sure default constructor is added.
