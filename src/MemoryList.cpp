@@ -9,7 +9,7 @@ namespace GameMemorySystem
 
 MemoryList::iterator& MemoryList::iterator::operator++()
 {
-	m_pBlockPtr = getNextBlock(m_pBlockPtr);
+	m_pBlockHeader = getNextBlock(m_pBlockHeader);
 	return *this;
 }
 
@@ -22,7 +22,7 @@ MemoryList::iterator MemoryList::iterator::operator++(int)
 
 MemoryList::iterator& MemoryList::iterator::operator--()
 {
-	m_pBlockPtr = getPrevBlock(m_pBlockPtr);
+	m_pBlockHeader = getPrevBlock(m_pBlockHeader);
 	return *this;
 }
 
@@ -34,73 +34,74 @@ MemoryList::iterator MemoryList::iterator::operator--(int)
 }
 
 // Writes the given metadata into the given location
-void MemoryList::writeMetadata(metadata_type* pLocation, bool isFree, size_t size)
+void MemoryList::writeMetadata(blockMetadata_t* pLocation, bool isFree, size_t size)
 {
 	// Ensure that size does not exceed storage space in header
-	// One bit stores "Free" flag so we have sizeof(metadata_type) * 8 - 1 bits
-	metadata_type maxSize = -1;
+	// One bit stores "Free" flag so we have sizeof(blockMetadata_t) * 8 - 1 bits
+	blockMetadata_t maxSize = -1;
 	maxSize = maxSize >> 1;
 	assert(size <= maxSize);
 
 	// Combine isFree and size and write result into desired location
-	metadata_type isFree_bits = static_cast<metadata_type>(isFree);
-	metadata_type size_bits = static_cast<metadata_type>(size) << 1;
+	blockMetadata_t isFree_bits = static_cast<blockMetadata_t>(isFree);
+	blockMetadata_t size_bits = static_cast<blockMetadata_t>(size) << 1;
 	*pLocation = isFree_bits | size_bits;
 }
 
 // Writes metadata that defines the start and end of a memory block.
 // Returns ptr to the header of the block
-blockHeaderPtr MemoryList::writeBlock(U8* pStart, bool isFree, size_t size)
+blockMetadata_t* MemoryList::writeBlock(U8* pStart, bool isFree, size_t size)
 {
 	assert(size >= minBlockSize);
 
-	metadata_type* pHeader = reinterpret_cast<metadata_type*>(pStart);
+	blockMetadata_t* pHeader = reinterpret_cast<blockMetadata_t*>(pStart);
 	writeMetadata(pHeader, isFree, size);
 	U8* end = pStart + size;
-	metadata_type* pFooter = reinterpret_cast<metadata_type*>(end - sizeof(metadata_type));
+	blockMetadata_t* pFooter = reinterpret_cast<blockMetadata_t*>(end - sizeof(blockMetadata_t));
 	writeMetadata(pFooter, isFree, size);
 	return pHeader;
 }
 
 void MemoryList::init(U8* pMemStart, size_t size)
 {
-	m_pListStart = reinterpret_cast<blockHeaderPtr>(pMemStart);
+	m_pListStart = reinterpret_cast<blockMetadata_t*>(pMemStart);
 	*m_pListStart = listStartMeta;
 	U8* pMemEnd = pMemStart + size;
-	m_pListEnd = reinterpret_cast<blockHeaderPtr>(pMemEnd - sizeof(metadata_type));
+	m_pListEnd = reinterpret_cast<blockMetadata_t*>(pMemEnd - sizeof(blockMetadata_t));
 	*m_pListEnd = listEndMeta;
-	U8* pFirstBlockStart = pMemStart + sizeof(metadata_type);
-	size_t firstBlockSize = size - 2 * sizeof(metadata_type);
+	U8* pFirstBlockStart = pMemStart + sizeof(blockMetadata_t);
+	size_t firstBlockSize = size - 2 * sizeof(blockMetadata_t);
 	writeBlock(pFirstBlockStart, true, firstBlockSize);
 }
 
-void MemoryList::splitBlock(blockHeaderPtr pBlockToSplit, size_t sizeOfFirstBlock)
+void MemoryList::splitBlock(blockMetadata_t* pBlockHeader, size_t sizeOfFirstNewBlock)
 {
-	size_t totalSize = getSize(pBlockToSplit);
-	size_t sizeOfSecondBlock = totalSize - sizeOfFirstBlock;
+	size_t totalSize = getSize(pBlockHeader);
+	size_t sizeOfSecondNewBlock = totalSize - sizeOfFirstNewBlock;
 
-	assert(isFree(pBlockToSplit));
-	assert(sizeOfSecondBlock >= minBlockSize);
+	assert(isFree(pBlockHeader));
+	assert(sizeOfFirstNewBlock >= minBlockSize);
+	assert(sizeOfSecondNewBlock >= minBlockSize);
 
-	U8* pFirstBlockStart = reinterpret_cast<U8*>(pBlockToSplit);
-	writeBlock(pFirstBlockStart, true, sizeOfFirstBlock);
-	U8* pSecondBlockStart = pFirstBlockStart + sizeOfFirstBlock;
-	writeBlock(pSecondBlockStart, true, sizeOfSecondBlock);
+	U8* pFirstBlockStart = reinterpret_cast<U8*>(pBlockHeader);
+	writeBlock(pFirstBlockStart, true, sizeOfFirstNewBlock);
+	U8* pSecondBlockStart = pFirstBlockStart + sizeOfFirstNewBlock;
+	writeBlock(pSecondBlockStart, true, sizeOfSecondNewBlock);
 }
 
 void* MemoryList::alloc(size_t size, Alignment alignment)
 {
 	// Look for smallest block that meets our size requirement
 	// TODO: Make heap to do this
-	size_t requiredBlockSize = getMaxPayloadSize(size, alignment) + 2 * sizeof(metadata_type);
+	size_t requiredBlockSize = getMaxPayloadSize(size, alignment) + 2 * sizeof(blockMetadata_t);
 	size_t smallestSuitableSize = std::numeric_limits<size_t>::max();
-	blockHeaderPtr pMostSuitableBlock = nullptr;
-	for (blockHeaderPtr pBlock : *this)
+	blockMetadata_t* pMostSuitableBlock = nullptr;
+	for (blockMetadata_t* pBlockHeader : *this)
 	{
-		size_t blockSize = getSize(pBlock);
-		if (blockSize < smallestSuitableSize && blockSize >= requiredBlockSize && isFree(pBlock))
+		size_t blockSize = getSize(pBlockHeader);
+		if (blockSize < smallestSuitableSize && blockSize >= requiredBlockSize && isFree(pBlockHeader))
 		{
-			pMostSuitableBlock = pBlock;
+			pMostSuitableBlock = pBlockHeader;
 			smallestSuitableSize = blockSize;
 		}
 	}
@@ -118,7 +119,7 @@ void* MemoryList::alloc(size_t size, Alignment alignment)
 	}
 
 	// Calc & write offset for alignment
-	U8* pPayloadStart = reinterpret_cast<U8*>(pMostSuitableBlock) + sizeof(metadata_type);
+	U8* pPayloadStart = reinterpret_cast<U8*>(pMostSuitableBlock) + sizeof(blockMetadata_t);
 	U8* pAlignedStart = AlignWithSpaceForPrefix(pPayloadStart, alignment);
 	U8 offset = pAlignedStart - pPayloadStart;
 	pPayloadStart[0] = offset;
@@ -135,77 +136,75 @@ void MemoryList::free(void* ptr)
 
 }
 
-bool MemoryList::isFree(const blockHeaderPtr pMetadata)
+bool MemoryList::isFree(const blockMetadata_t* pMetadata)
 {
 	return (*pMetadata & 1) > 0;
 }
 
-size_t MemoryList::getSize(const blockHeaderPtr pMetadata)
+size_t MemoryList::getSize(const blockMetadata_t* pMetadata)
 {
 	return *pMetadata >> 1;
 }
 
-blockHeaderPtr MemoryList::getPrevBlock(blockHeaderPtr pBlock)
+blockMetadata_t* MemoryList::getPrevBlock(blockMetadata_t* pBlockHeader)
 {
-	assert(!isStartOfList(pBlock));
+	assert(!isStartOfList(pBlockHeader));
 
 	// Prev block's footer must be directly before this block's header
-	metadata_type* pPrevFooter = pBlock - 1;
+	blockMetadata_t* pPrevFooter = pBlockHeader - 1;
 	size_t prevBlockSize = getSize(pPrevFooter);
 
 	// Once we know size of previous block, roll ptr back that many bytes
-	U8* pThisBlockStart = reinterpret_cast<U8*>(pBlock);
+	U8* pThisBlockStart = reinterpret_cast<U8*>(pBlockHeader);
 	U8* pPrevBlockStart = pThisBlockStart - prevBlockSize;
-	blockHeaderPtr pResult = reinterpret_cast<blockHeaderPtr>(pPrevBlockStart);
+	blockMetadata_t* pResult = reinterpret_cast<blockMetadata_t*>(pPrevBlockStart);
 	return pResult;
 }
 
-blockHeaderPtr MemoryList::getNextBlock(blockHeaderPtr pBlock)
+blockMetadata_t* MemoryList::getNextBlock(blockMetadata_t* pBlockHeader)
 {
-	assert(!isEndOfList(pBlock));
+	assert(!isEndOfList(pBlockHeader));
 
 	// Move ptr forward based on how big this block is
-	size_t thisBlockSize = getSize(pBlock);
-	U8* pThisBlockStart = reinterpret_cast<U8*>(pBlock);
+	size_t thisBlockSize = getSize(pBlockHeader);
+	U8* pThisBlockStart = reinterpret_cast<U8*>(pBlockHeader);
 	U8* pNextBlockStart = pThisBlockStart + thisBlockSize;
-	metadata_type* pResult = reinterpret_cast<metadata_type*>(pNextBlockStart);
+	blockMetadata_t* pResult = reinterpret_cast<blockMetadata_t*>(pNextBlockStart);
 	return pResult;
 }
 
 
-bool MemoryList::isStartOfList(const blockHeaderPtr bBlock)
+bool MemoryList::isStartOfList(const blockMetadata_t* pBlockHeader)
 {
-	// Special case: Size is sizeOf(metadata_type) and isFree flag off
-	return *bBlock == listStartMeta;
+	return *pBlockHeader == listStartMeta;
 }
 
-bool MemoryList::isEndOfList(const blockHeaderPtr bBlock)
+bool MemoryList::isEndOfList(const blockMetadata_t* pBlockHeader)
 {
-	// Special case: Size sizeOf(metadata_type) isFree flag on
-	return *bBlock == listEndMeta;
+	return *pBlockHeader == listEndMeta;
 }
 
-metadata_type* MemoryList::getFooter(blockHeaderPtr pBlock)
+blockMetadata_t* MemoryList::getFooter(blockMetadata_t* pBlockHeader)
 {
-	size_t size = getSize(pBlock);
-	U8* pTemp = reinterpret_cast<U8*>(pBlock);
+	size_t size = getSize(pBlockHeader);
+	U8* pTemp = reinterpret_cast<U8*>(pBlockHeader);
 	pTemp += size;
-	pTemp -= sizeof(metadata_type);
-	metadata_type* result = reinterpret_cast<metadata_type*>(pTemp);
+	pTemp -= sizeof(blockMetadata_t);
+	blockMetadata_t* result = reinterpret_cast<blockMetadata_t*>(pTemp);
 	return result;
 }
 
-void MemoryList::setFree(blockHeaderPtr pBlock)
+void MemoryList::setFree(blockMetadata_t* pBlockHeader)
 {
-	*pBlock |= 1;
-	metadata_type* pFooter = getFooter(pBlock);
+	*pBlockHeader |= 1;
+	blockMetadata_t* pFooter = getFooter(pBlockHeader);
 	*pFooter |= 1;
 }
 
-void MemoryList::setNotFree(blockHeaderPtr pBlock)
+void MemoryList::setNotFree(blockMetadata_t* pBlockHeader)
 {
-	*pBlock &= ~1;
-	metadata_type* pFooter = getFooter(pBlock);
+	*pBlockHeader &= ~1;
+	blockMetadata_t* pFooter = getFooter(pBlockHeader);
 	*pFooter &= ~1;
 }
 

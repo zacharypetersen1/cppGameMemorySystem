@@ -42,7 +42,8 @@ void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 	case Allocator::persistant:
 		return m_dynamicAlloc.alloc(size, align);
 	default:
-		assert(0 == 1, "No alloc function for give alloc type was defined.");
+		// Should never reach here
+		assert(0 == 1);
 		return nullptr;
 	}
 }
