@@ -16,7 +16,7 @@ class bar
 int main()
 {
 	gMemSystem.startup(2048, 32, 32);
-	gAllocator = GameMemorySystem::Allocator::dynamic;
+	gActiveAllocator = GameMemorySystem::Allocator::dynamic;
 	foo* pFoo = new foo();
 	bar* pBar = new bar();
 	foo* pFoo2 = new foo();

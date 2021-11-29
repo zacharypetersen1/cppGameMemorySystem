@@ -6,7 +6,7 @@ extern GameMemorySystem::MemorySystem gMemSystem;
 
 // The allocator that will be used if none is specified.
 // Use this to control where third party libraries allocate memory with new.
-extern GameMemorySystem::Allocator gAllocator;
+extern GameMemorySystem::Allocator gActiveAllocator;
 
 // The default alignment that will be used if none is specified.
 extern GameMemorySystem::Alignment gDefaultAlignment;
