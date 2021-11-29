@@ -140,9 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DynamicAllocator.cpp" />
+    <ClCompile Include="DynamicListAllocator.cpp" />
     <ClCompile Include="MemoryGlobals.cpp" />
-    <ClCompile Include="MemoryList.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemorySystem.cpp" />
@@ -150,9 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryGlobals.h" />
-    <ClInclude Include="MemoryList.h" />
     <ClInclude Include="MemoryUtils.h" />
-    <ClInclude Include="DynamicAllocator.h" />
+    <ClInclude Include="DynamicListAllocator.h" />
     <ClInclude Include="MemorySystem.h" />
     <ClInclude Include="StackAllocator.h" />
   </ItemGroup>

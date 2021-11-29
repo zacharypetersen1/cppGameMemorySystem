@@ -1,5 +1,5 @@
 #pragma once
-#include "DynamicAllocator.h"
+#include "DynamicListAllocator.h"
 #include "StackAllocator.h"
 #include "MemoryUtils.h"
 
@@ -13,7 +13,7 @@ private:
 	void* m_pMemBlock;
 	
 	// Used to allocate to dynamic memory 
-	DynamicAllocator m_dynamicAlloc;
+	DynamicListAllocator m_dynamicAlloc;
 
 	// Used to allocate to memory that is valid for the rest of the frame
 	StackAllocator m_singleFrameAlloc;

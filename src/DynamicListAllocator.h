@@ -11,15 +11,22 @@ typedef size_t blockMetadata_t;
 // Minimum size of a block in bytes
 constexpr size_t minBlockSize = 2 * sizeof(blockMetadata_t) + 2 * sizeof(blockMetadata_t*);
 
-// Maintains a list of memory blocks
-class MemoryList
+// Allows for allocations and frees to occur in any order and for different sized objects
+// Stores a list of allocated and free blocks.
+class DynamicListAllocator
 {
 private:
-	// Ptr to the start and end of the list
+	// Location in memory where this allocator starts
+	U8* m_pMem;
+
+	// Size in bytes of this allocator's memory region
+	size_t m_size;
+
+	// Ptr to the start and end blocks of the list
 	blockMetadata_t* m_pListStart = nullptr;
 	blockMetadata_t* m_pListEnd = nullptr;
 
-	// Special metadata values that indicate blocks lying at the start/end of list
+	// Special metadata values that indicate the start & end of the list
 	static constexpr blockMetadata_t listStartMeta = sizeof(blockMetadata_t) << 1;
 	static constexpr blockMetadata_t listEndMeta = (sizeof(blockMetadata_t) << 1) | 1;
 
@@ -49,18 +56,30 @@ private:
 	void splitBlock(blockMetadata_t* pBlockHeader, size_t sizeOfFirstNewBlock);
 
 public:
-	// Writes metadata that defines the start and end of a memory block.
-	// Returns ptr to the header of the block
-	blockMetadata_t* writeBlock(U8* pStart, bool isFree, size_t size);
+	// Make sure default constructor is added
+	DynamicListAllocator() = default;
 
-	// Initializes the memory list
-	void init(U8* pMemStart, size_t size);
+	// Delete copy & move constructors/assignment operators
+	DynamicListAllocator(const DynamicListAllocator&) = delete;
+	DynamicListAllocator& operator=(const DynamicListAllocator&) = delete;
+	DynamicListAllocator(DynamicListAllocator&&) = delete;
+	DynamicListAllocator& operator=(DynamicListAllocator&&) = delete;
+
+	// Initializes allocator for use
+	void init(U8* pMemLocation, size_t bytes);
+
+	// Prints debug info
+	void print() const;
 
 	// Allocates new memory block that will fit size bytes with given alignment
-	void* alloc(size_t size, Alignment alignment);
+	void* alloc(size_t size, Alignment align);
 
 	// Frees the memory block that given ptr lies within
 	void free(void* ptr);
+
+	// Writes metadata that defines the start and end of a memory block.
+	// Returns ptr to the header of the block
+	blockMetadata_t* writeBlock(U8* pStart, bool isFree, size_t size);
 
 	// Returns iterator to the first block
 	iterator begin();
@@ -98,5 +117,4 @@ public:
 	// Returns true if given block is the special "end" block
 	static bool isEndOfList(const blockMetadata_t* pBlockHeader);
 };
-
 }
