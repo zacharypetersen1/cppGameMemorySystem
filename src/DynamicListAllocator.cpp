@@ -147,6 +147,15 @@ void DynamicListAllocator::splitBlock(blockMetadata_t* pBlockHeader, size_t size
 	writeBlock(pSecondBlockStart, true, sizeOfSecondNewBlock);
 }
 
+void DynamicListAllocator::combineWithNextBlock(blockMetadata_t* pBlockHeader)
+{
+	blockMetadata_t* pNextBlockHeader = getNextBlock(pBlockHeader);
+	assert(pNextBlockHeader != m_pListEnd);
+	size_t size = getSize(pBlockHeader) + getSize(pNextBlockHeader);
+	U8* pCombinedBlockStart = reinterpret_cast<U8*>(pBlockHeader);
+	writeBlock(pCombinedBlockStart, true, size);
+}
+
 bool DynamicListAllocator::isFree(const blockMetadata_t* pMetadata)
 {
 	return (*pMetadata & 1) > 0;

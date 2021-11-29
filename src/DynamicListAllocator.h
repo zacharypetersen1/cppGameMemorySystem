@@ -52,8 +52,13 @@ public:
 
 private:
 	// Splits given block into two blocks.
-	// Size given is the size of first new block in bytes.
+	// Size of first new block is given in bytes.
+	// Both blocks are marked "free"
 	void splitBlock(blockMetadata_t* pBlockHeader, size_t sizeOfFirstNewBlock);
+
+	// Combines given block with the block after it.
+	// The resulting block is marked "free"
+	void combineWithNextBlock(blockMetadata_t* pBlockHeader);
 
 public:
 	// Make sure default constructor is added
