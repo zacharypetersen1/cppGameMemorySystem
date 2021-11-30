@@ -42,10 +42,13 @@ public:
 	void shutdown();
 
 	// Prints out debug information about the memory block
-	void print() const;
+	void print();
 
 	// Allocates memory using the specified allocator
 	void* alloc(size_t m_size, Alignment align, Allocator allocType);
+
+	// Deallocates memory if the memory resides within area that can be deallocated
+	void free(void* ptr);
 
 	// Clears memory used by the single frame allocator
 	void clearSingleFrameMemory() { m_singleFrameAlloc.clear(); }

@@ -23,11 +23,11 @@ void MemorySystem::shutdown()
 	free(m_pMemBlock);
 }
 
-void MemorySystem::print() const
+void MemorySystem::print()
 {
 	m_dynamicAlloc.print();
-	m_persistantAlloc.print();
-	m_singleFrameAlloc.print();
+	//m_persistantAlloc.print();
+	//m_singleFrameAlloc.print();
 }
 
 void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
@@ -47,4 +47,13 @@ void* MemorySystem::alloc(size_t size, Alignment align, Allocator allocType)
 		return nullptr;
 	}
 }
+
+void MemorySystem::free(void* ptr)
+{
+	if (m_dynamicAlloc.containsAddress(ptr))
+	{
+		m_dynamicAlloc.free(ptr);
+	}
+}
+
 }

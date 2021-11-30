@@ -74,13 +74,17 @@ public:
 	void init(U8* pMemLocation, size_t bytes);
 
 	// Prints debug info
-	void print() const;
+	// TODO: create const iterator and make this const
+	void print();
 
 	// Allocates new memory block that will fit size bytes with given alignment
 	void* alloc(size_t size, Alignment align);
 
 	// Frees the memory block that given ptr lies within
 	void free(void* ptr);
+
+	// Returns true if the given memory address is within the list
+	bool containsAddress(void* ptr) const;
 
 	// Writes metadata that defines the start and end of a memory block.
 	// Returns ptr to the header of the block

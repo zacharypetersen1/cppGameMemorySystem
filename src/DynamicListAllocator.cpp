@@ -21,19 +21,35 @@ void DynamicListAllocator::init(U8* pMemStart, size_t bytes)
 	writeBlock(pFirstBlockStart, true, firstBlockSize);
 }
 
-void DynamicListAllocator::print() const
+void DynamicListAllocator::print()
 {
-	std::cout << "MemHeap size: " << std::dec << m_size << std::endl;
-	for (size_t i = 0; i < m_size; ++i)
+	std::cout << "Dynamic List Size: " << std::dec << m_size << std::endl;
+	for (auto pBlockHeader : *this)
 	{
-		std::cout << std::hex << (size_t)m_pMem + i << std::dec << ":\n";
+		if (isFree(pBlockHeader))
+		{
+			std::cout << std::hex << pBlockHeader << " free bytes:" 
+				<< std::dec << getSize(pBlockHeader) << std::endl;
+		}
+		else
+		{
+			U8* ptrU8 = reinterpret_cast<U8*>(pBlockHeader);
+			U8 offset = ptrU8[sizeof(blockMetadata_t)];
+			U8* pPayload = ptrU8 + sizeof(blockMetadata_t) + offset;
+			std::cout << std::hex << pBlockHeader << " aloc bytes:"
+				<< std::dec << getSize(pBlockHeader) << " offset:"
+				<< static_cast<int>(offset) << " payload:" << std::hex 
+				<< static_cast<void*>(pPayload) << std::endl;
+		}
 	}
+	std::cout << std::endl;
 }
 
 void* DynamicListAllocator::alloc(size_t size, Alignment align)
 {
 	// Look for smallest block that meets our size requirement
-	// TODO: Make heap to do this
+	// TODO: Link free blocks together instead of searching all blocks
+	// TODO#2: Impliment a heap instead of a list
 	size_t requiredBlockSize = getMaxPayloadSize(size, align) + 2 * sizeof(blockMetadata_t);
 	size_t smallestSuitableSize = std::numeric_limits<size_t>::max();
 	blockMetadata_t* pMostSuitableBlock = nullptr;
@@ -74,7 +90,30 @@ void* DynamicListAllocator::alloc(size_t size, Alignment align)
 
 void DynamicListAllocator::free(void* ptr)
 {
+	// Get block and mark it free
+	U8* pAlignedStart = reinterpret_cast<U8*>(ptr);
+	U8 offset = pAlignedStart[-1];
+	U8* pBlockStart = pAlignedStart - offset - sizeof(blockMetadata_t);
+	blockMetadata_t* pBlockHeader = reinterpret_cast<blockMetadata_t*>(pBlockStart);
+	setFree(pBlockHeader);
 
+	// Check if we can combine this block with any adjacent blocks
+	blockMetadata_t* pPrevBlockHeader = getPrevBlock(pBlockHeader);
+	if (isFree(pPrevBlockHeader))
+	{
+		pBlockHeader = pPrevBlockHeader;
+		combineWithNextBlock(pBlockHeader);
+	}
+	blockMetadata_t* pNextBlockHeader = getNextBlock(pBlockHeader);
+	if (isFree(pNextBlockHeader))
+	{
+		combineWithNextBlock(pBlockHeader);
+	}
+}
+
+bool DynamicListAllocator::containsAddress(void* ptr) const
+{
+	return ptr >= m_pMem && ptr < m_pMem + m_size;
 }
 
 DynamicListAllocator::iterator& DynamicListAllocator::iterator::operator++()
