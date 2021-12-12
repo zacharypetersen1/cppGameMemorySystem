@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <iostream>
+#include <new>
 #include "MemoryUtils.h"
 
 namespace GameMemorySystem
