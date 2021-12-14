@@ -1,18 +1,13 @@
 #pragma once
 #include "MemoryUtils.h"
+#include "Allocator.h"
 
 namespace GameMemorySystem
 {
 // Simple allocator where memory is freed in FIFO order
-class StackAllocator
+class StackAllocator : public Allocator
 {
 private:
-	// Ptr to the beginning of stack
-	U8* m_pMem = nullptr;
-
-	// Size of stack in bytes
-	size_t m_size = 0;
-
 	// Root location of the stack
 	U8* m_root = 0;
 
@@ -39,6 +34,6 @@ public:
 	void print() const;
 
 	// Allocates object of given size with given alignment
-	void* alloc(size_t size, Alignment align);
+	void* alloc(size_t size, Alignment align) override;
 };
 }

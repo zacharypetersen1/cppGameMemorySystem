@@ -15,20 +15,24 @@ class bar
 
 int main()
 {
-	gMemSystem.startup(2048, 32, 32);
-	gActiveAllocator = GameMemorySystem::Allocator::dynamic;
-	gMemSystem.print();
-	foo* pFoo = new foo();
-	gMemSystem.print();
-	bar* pBar = new bar();
-	gMemSystem.print();
-	foo* pFoo2 = new foo();
-	gMemSystem.print();
-	delete pBar;
-	gMemSystem.print();
-	delete pFoo;
-	gMemSystem.print();
-	delete pFoo2;
-	gMemSystem.print();
-	return 0;
+	gMemSystem.startup();
+	gMemSystem.m_poolAlloc16.printFreeNodes();
+	foo* f1 = new(GameMemorySystem::Alignment(16), gMemSystem.m_poolAlloc16) foo();
+	gMemSystem.m_poolAlloc16.printFreeNodes();
+	foo* f2 = new(GameMemorySystem::Alignment(16), gMemSystem.m_poolAlloc16) foo();
+	gMemSystem.m_poolAlloc16.printFreeNodes();
+	delete f1;
+	gMemSystem.m_poolAlloc16.printFreeNodes();
+	delete f2;
+	gMemSystem.m_poolAlloc16.printFreeNodes();
+
+	gMemSystem.m_dynamicAlloc.print();
+	foo* df1 = new(GameMemorySystem::Alignment(sizeof(int)), gMemSystem.m_dynamicAlloc) foo();
+	gMemSystem.m_dynamicAlloc.print();
+	bar* db1 = new(GameMemorySystem::Alignment(16), gMemSystem.m_dynamicAlloc) bar();
+	gMemSystem.m_dynamicAlloc.print();
+	delete db1;
+	gMemSystem.m_dynamicAlloc.print();
+	delete df1;
+	gMemSystem.m_dynamicAlloc.print();
 }

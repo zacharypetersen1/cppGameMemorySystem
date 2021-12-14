@@ -1,5 +1,6 @@
 #pragma once
 #include "MemoryUtils.h"
+#include "Allocator.h"
 
 namespace GameMemorySystem
 {
@@ -13,15 +14,9 @@ constexpr size_t minBlockSize = 2 * sizeof(blockMetadata_t) + 2 * sizeof(blockMe
 
 // Allows for allocations and frees to occur in any order and for different sized objects
 // Stores a list of allocated and free blocks.
-class DynamicListAllocator
+class DynamicListAllocator : public Allocator
 {
 private:
-	// Location in memory where this allocator starts
-	U8* m_pMem;
-
-	// Size in bytes of this allocator's memory region
-	size_t m_size;
-
 	// Ptr to the start and end blocks of the list
 	blockMetadata_t* m_pListStart = nullptr;
 	blockMetadata_t* m_pListEnd = nullptr;
@@ -78,10 +73,10 @@ public:
 	void print();
 
 	// Allocates new memory block that will fit size bytes with given alignment
-	void* alloc(size_t size, Alignment align);
+	void* alloc(size_t size, Alignment align) override;
 
 	// Frees the memory block that given ptr lies within
-	void free(void* ptr);
+	void free(void* ptr) override;
 
 	// Returns true if the given memory address is within the list
 	bool containsAddress(void* ptr) const;

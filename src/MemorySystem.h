@@ -2,6 +2,7 @@
 #include "DynamicListAllocator.h"
 #include "StackAllocator.h"
 #include "MemoryUtils.h"
+#include "PoolAllocator.h"
 
 namespace GameMemorySystem
 {
@@ -10,8 +11,12 @@ class MemorySystem
 {
 private:
 	// Ptr to the start of the memory block
-	void* m_pMemBlock;
+	void* m_pMemBlock = nullptr;
+
+	// Size of the entire memory block used by all allocators in bytes
+	size_t m_totalBytes = 0;
 	
+public:
 	// Used to allocate to dynamic memory 
 	DynamicListAllocator m_dynamicAlloc;
 
@@ -21,8 +26,11 @@ private:
 	// Used to allocate memory that will stay valid while the process is running
 	StackAllocator m_persistantAlloc;
 
-	// Size of the entire memory block used by all allocators in bytes
-	size_t m_totalBytes;
+	// 16 byte pool alocator
+	PoolAllocator m_poolAlloc16;
+
+	// 32 byte pool alocator
+	PoolAllocator m_poolAlloc32;
 
 public:
 	// Make sure default constructor is added because we are deleting other constructors below.
@@ -35,20 +43,10 @@ public:
 	MemorySystem& operator=(MemorySystem&&) = delete;
 
 	// Allocates the memory block and sets up the memory system for use.
-	// Use the parameters to specify how many bytes each allocator should recieve.
-	void startup(size_t dynamicMemBytes, size_t persistantMemBytes, size_t oneFrameMemBytes);
+	void startup();
 
 	// Releases memory & any other resources held by the memory system and allocators
 	void shutdown();
-
-	// Prints out debug information about the memory block
-	void print();
-
-	// Allocates memory using the specified allocator
-	void* alloc(size_t m_size, Alignment align, Allocator allocType);
-
-	// Deallocates memory if the memory resides within area that can be deallocated
-	void free(void* ptr);
 
 	// Clears memory used by the single frame allocator
 	void clearSingleFrameMemory() { m_singleFrameAlloc.clear(); }

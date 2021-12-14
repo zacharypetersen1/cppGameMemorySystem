@@ -140,18 +140,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="DynamicListAllocator.cpp" />
     <ClCompile Include="MemoryGlobals.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemorySystem.cpp" />
+    <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="StackAllocator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Allocator.h" />
     <ClInclude Include="MemoryGlobals.h" />
     <ClInclude Include="MemoryUtils.h" />
     <ClInclude Include="DynamicListAllocator.h" />
     <ClInclude Include="MemorySystem.h" />
+    <ClInclude Include="PoolAllocator.h" />
     <ClInclude Include="StackAllocator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
