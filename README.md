@@ -11,3 +11,4 @@ Type            | Object Size | Deallocation time                   | Fragmentat
 **Persistent**  | Any         | When memory system is shut down.    | No            | Stack
 **Single Frame**| Any         | At the end of the frame.            | No            | Stack
 **Dynamic**     | Any         | When manually deleted.              | Yes           | List
+**Pool**        | Fixed Size  | When manually deleted.              | No            | List
