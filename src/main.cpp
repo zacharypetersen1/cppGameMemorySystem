@@ -1,38 +1,31 @@
 #include "MemoryGlobals.h"
-#include "MemoryUtils.h"
-#include <cstdlib>
-#include <iostream>
 
 class foo
 {
-	int beef = 0xbeefbeef;
-};
-
-class bar
-{
-	long long int longbeef = 0xbeeeeeeeeeeeeeef;
+	int bar = 0xbeefbeef;
+	float baz = 0.0f;
 };
 
 int main()
 {
+	// Call before making any allocations
 	gMemSystem.startup();
-	gMemSystem.m_poolAlloc16.printFreeNodes();
-	foo* f1 = new(GameMemorySystem::Alignment(16), gMemSystem.m_poolAlloc16) foo();
-	gMemSystem.m_poolAlloc16.printFreeNodes();
-	foo* f2 = new(GameMemorySystem::Alignment(16), gMemSystem.m_poolAlloc16) foo();
-	gMemSystem.m_poolAlloc16.printFreeNodes();
-	delete f1;
-	gMemSystem.m_poolAlloc16.printFreeNodes();
-	delete f2;
-	gMemSystem.m_poolAlloc16.printFreeNodes();
 
-	gMemSystem.m_dynamicAlloc.print();
-	foo* df1 = new(GameMemorySystem::Alignment(sizeof(int)), gMemSystem.m_dynamicAlloc) foo();
-	gMemSystem.m_dynamicAlloc.print();
-	bar* db1 = new(GameMemorySystem::Alignment(16), gMemSystem.m_dynamicAlloc) bar();
-	gMemSystem.m_dynamicAlloc.print();
-	delete db1;
-	gMemSystem.m_dynamicAlloc.print();
-	delete df1;
-	gMemSystem.m_dynamicAlloc.print();
+	// Specify alignment & allocator when using new
+	foo* pFoo1 = new(ALIGN(4), gMemSystem.m_persistantAlloc) foo();
+
+	// Default allocator & alignment are used if not specified
+	foo* pFoo2 = new foo(); // dynamic aloc & 16 byte aligned
+	gDefaultAlignment = ALIGN(4);
+	gDefaultAllocator = gMemSystem.m_persistantAlloc;
+	foo* pFoo3 = new foo(); // Persistant aloc & 4 byte aligned
+
+	// Omit allocator or alignment to use the defaults
+	foo* pFoo4 = new(gMemSystem.m_singleFrameAlloc) foo();
+	foo* pFoo5 = new(ALIGN(8)) foo();
+
+	// Pool allocators are always aligned to size of pool elements
+	foo* pFoo6 = new(gMemSystem.m_poolAlloc16) foo(); // 16 byte aligned
+	foo* pFoo7 = new(gMemSystem.m_poolAlloc32) foo(); // 32 byte aligned
+
 }
