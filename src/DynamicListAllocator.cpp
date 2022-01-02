@@ -51,7 +51,10 @@ void* DynamicListAllocator::alloc(size_t size, Alignment align)
 	// Look for smallest block that meets our size requirement
 	// TODO: Link free blocks together instead of searching all blocks
 	// TODO#2: Impliment a heap instead of a list
-	size_t requiredBlockSize = getMaxPayloadSize(size, align) + 2 * sizeof(blockMetadata_t);
+	size_t maxPayloadSize = getMaxPayloadSize(size, align);
+	size_t requiredBlockSize = maxPayloadSize + 2 * sizeof(blockMetadata_t);
+	requiredBlockSize = std::max(requiredBlockSize, minBlockSize);
+
 	size_t smallestSuitableSize = std::numeric_limits<size_t>::max();
 	blockMetadata_t* pMostSuitableBlock = nullptr;
 	for (blockMetadata_t* pBlockHeader : *this)
